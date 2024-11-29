@@ -23,7 +23,7 @@ int handleMenuInput(RenderWindow& window, int& selectedOption, int& currentState
 void drawLevelSelect(RenderWindow& window, int& selectedLevel, int& currentState);
 int handleLevelSelectInput(RenderWindow& window, int& selectedLevel, int& currentState);
 void initializeGameResources();
-void runGame(int selectedLevel);
+void runGame(int& selectedLevel, float& player_x, float& player_y, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float& bee_x, float& bee_y, bool& bee_moving_right, int& bee_current_row, Sprite& beeSprite, Clock& beeClock, bool& moveDown, RectangleShape& groundRectangle, RenderWindow& window);
 void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite);
 void moveBullet(float& bullet_y, bool& bullet_exists, Clock& bulletClock);
 void drawBullet(RenderWindow& window, float& bullet_x, float& bullet_y, Sprite& bulletSprite);
@@ -64,7 +64,6 @@ int main()
 
 	float bullet_x = player_x;
 	float bullet_y = player_y-32; // so that bullet is one box above the player
-	cout<< "bullet\'s y coordinate "<< bullet_y<< endl;
 	bool bullet_exists = false;
 
 	Clock bulletClock;
@@ -116,13 +115,13 @@ int main()
                 break;
 
             case LEVEL_SELECT_STATE:
-                //drawLevelSelect(window, selectedLevel, currentState);
-                //handleLevelSelectInput(window, selectedLevel, currentState);
+                drawLevelSelect(window, selectedLevel, currentState);
+                handleLevelSelectInput(window, selectedLevel, currentState);
                 break;
 
             case GAME_STATE:
-                //runGame(selectedLevel);
-                //currentState = MENU_STATE;
+                runGame(selectedLevel, player_x, player_y, playerSprite, bulletSprite, bulletClock, bullet_x, bullet_y, bullet_exists, bee_x, bee_y, bee_moving_right, bee_current_row, beeSprite, beeClock, moveDown, groundRectangle, window);
+                // currentState = MENU_STATE;
                 break;
 
             case EXIT_STATE:
@@ -132,45 +131,60 @@ int main()
 
 		window.display();
 
-		/*
-		Event e;
-		while (window.pollEvent(e)) {
-			if (e.type == Event::Closed) {
-				return 0;
-			} else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Right) {
-                if (static_cast<int>(player_x)!=928) {
-                	player_x+=boxPixelsX;
-                	bullet_x+= bullet_exists ? 0 : boxPixelsX;
-                }
-            } else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Left) {
-				if (static_cast<int>(player_x)!=0) {
-                    player_x-=boxPixelsX;
-                    bullet_x-= bullet_exists ? 0 : boxPixelsX;
-                }
-            } else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Space) {
-					bullet_exists = true;
-            }
-		}
-
-		moveBee(bee_x, bee_y, bee_moving_right, bee_current_row, beeSprite, beeClock, moveDown);
-        drawBee(window, bee_x, bee_y, beeSprite);
-
-		if (bullet_exists)
-		{
-			moveBullet(bullet_y, bullet_exists, bulletClock);
-			drawBullet(window, bullet_x, bullet_y, bulletSprite);
-		}
-		else
-		{
-			bullet_x = player_x;
-			bullet_y = player_y;
-		}
-
-		drawPlayer(window, player_x, player_y, playerSprite);
-		window.draw(groundRectangle);
-		*/
 	}
 }
+
+void runGame(int& selectedLevel, float& player_x, float& player_y, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float& bee_x, float& bee_y, bool& bee_moving_right, int& bee_current_row, Sprite& beeSprite, Clock& beeClock, bool& moveDown, RectangleShape& groundRectangle, RenderWindow& window) {
+    // Using selectedLevel to modify game difficulty
+
+    switch (selectedLevel) {
+        case 0:
+    	    Event e;
+			while (window.pollEvent(e)) {
+				if (e.type == Event::Closed) {
+                    exit(0);
+					return;
+				} else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Right) {
+                	if (static_cast<int>(player_x)!=928) {
+            	    	player_x+=boxPixelsX;
+        	        	bullet_x+= bullet_exists ? 0 : boxPixelsX;
+    	            }
+	            } else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Left) {
+					if (static_cast<int>(player_x)!=0) {
+            	        player_x-=boxPixelsX;
+        	            bullet_x-= bullet_exists ? 0 : boxPixelsX;
+    	            }
+	            } else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Space) {
+						bullet_exists = true;
+        	    }
+			}
+
+			moveBee(bee_x, bee_y, bee_moving_right, bee_current_row, beeSprite, beeClock, moveDown);
+        	drawBee(window, bee_x, bee_y, beeSprite);
+
+			if (bullet_exists)
+			{
+				moveBullet(bullet_y, bullet_exists, bulletClock);
+				drawBullet(window, bullet_x, bullet_y, bulletSprite);
+			}
+			else
+			{
+				bullet_x = player_x;
+				bullet_y = player_y;
+			}
+
+			drawPlayer(window, player_x, player_y, playerSprite);
+			window.draw(groundRectangle);
+            break;
+        case 1:
+            cout<< "hello2"<< endl;
+            break;
+        case 2:
+            cout<< "hello3"<< endl;
+            break;
+    }
+}
+
 
 // function that displays the menu
 void drawMenu(RenderWindow& window, int& selectedOption, int currentState) {
@@ -249,6 +263,74 @@ int handleMenuInput(RenderWindow& window, int& selectedOption, int& currentState
     return currentState;
 }
 
+// Function to draw level select
+void drawLevelSelect(RenderWindow& window, int& selectedLevel, int& currentState) {
+    Font menuFont;
+    menuFont.loadFromFile("Fonts/arial.ttf");
+
+    // Title
+    Text titleText("SELECT LEVEL", menuFont, 50);
+    titleText.setPosition(
+        resolutionX/2 - titleText.getGlobalBounds().width/2, 
+        100
+    );
+    titleText.setFillColor(Color::White);
+
+    // Level Options
+    string levelOptions[] = {"Level 1", "Level 2", "Level 3"};
+    Text levelTexts[3];
+
+    for (int i = 0; i < 3; i++) {
+        levelTexts[i].setFont(menuFont);
+        levelTexts[i].setString(levelOptions[i]);
+        levelTexts[i].setCharacterSize(30);
+        levelTexts[i].setPosition(
+            resolutionX/2 - levelTexts[i].getGlobalBounds().width/2, 
+            250 + i * 50
+        );
+        
+        // Highlight selected level
+        levelTexts[i].setFillColor(
+            (i == selectedLevel) ? Color::Yellow : Color::White
+        );
+
+        window.draw(levelTexts[i]);
+    }
+
+    window.draw(titleText);
+}
+
+// functionality after level has been selected by the user
+int handleLevelSelectInput(RenderWindow& window, int& selectedLevel, int& currentState) {
+    Event event;
+    while (window.pollEvent(event)) {
+        if (event.type == Event::Closed) {
+            window.close();
+            return 3; // EXIT_STATE
+        }
+
+        // Keyboard input for level selection
+        if (event.type == Event::KeyPressed) {
+            switch (event.key.code) {
+                case Keyboard::Up:
+                    selectedLevel = (selectedLevel - 1 + 3) % 3;
+                    break;
+                case Keyboard::Down:
+                    selectedLevel = (selectedLevel + 1) % 3;
+                    break;
+                case Keyboard::Enter:
+                    currentState = 2; // GAME_STATE
+                    return 2;
+                case Keyboard::Escape:
+                    currentState = 0; // MENU_STATE
+                    return 0;
+            }
+        }
+    }
+    return currentState;
+}
+
+// for displaying the trash can
 void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite) {
 	playerSprite.setPosition(player_x, player_y);
 	window.draw(playerSprite);
