@@ -23,7 +23,7 @@ int handleMenuInput(RenderWindow& window, int& selectedOption, int& currentState
 void drawLevelSelect(RenderWindow& window, int& selectedLevel, int& currentState);
 int handleLevelSelectInput(RenderWindow& window, int& selectedLevel, int& currentState);
 void initializeGameResources();
-void runGame(int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[5][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[20], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[]);
+void runGame(int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[5][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[20], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], Sound, Texture TextureBirdRight, Texture TextureBirdLeft, Texture TextureBirdStill, Sprite& hummingBirdSprite, Sound hummingBirdSound, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, bool& hummingbirdVisible, int& movementCount, int& bulletCollisionCount, bool& isMovingRight);
 void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite);
 void moveBullet(float& bullet_y, bool& bullet_exists, Clock& bulletClock, Sound fireSound);
 void drawBullet(RenderWindow& window, float& bullet_x, float& bullet_y, Sprite beeSprite);
@@ -33,6 +33,8 @@ void checkBulletBeeCollision(float bullet_x, float bullet_y, float beePositions[
 void drawHoneyCombs(int honeyCombArray[][gameRows*gameColumns], int honeyCombArrayIndex, RenderWindow& window, Sprite honeyCombSpriteArray[]);
 void drawBeeHives(int beeHiveArray[][gameRows*gameColumns], int beeHiveArrayIndex, RenderWindow& window, Sprite beeHiveSprites[]);
 void drawFlowers(RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[]);
+void checkBulletHoneyCombCollision(float bullet_x, float bullet_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound honeyCombOrBeeHiveMusic);
+void checkBulletBeeHiveCollision(float bullet_x, float bullet_y, int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, bool& bullet_exists, Sound honeyCombOrBeeHiveMusic);
 
 int main()
 {
@@ -66,6 +68,12 @@ int main()
   Sound fireSound;
   fireSound.setBuffer(fireBuffer);
 
+  // Honeycomb or beehive collision with the bullet
+  SoundBuffer honeyCombOrBeeHiveBuffer;
+  honeyCombOrBeeHiveBuffer.loadFromFile("./Sound Effects/Obstacle.wav");
+  Sound honeyCombOrBeeHiveMusic;
+  honeyCombOrBeeHiveMusic.setBuffer(honeyCombOrBeeHiveBuffer);
+
   // Beehive Bullet collision music
   SoundBuffer obstacleBulletCollisionBuffer;
   obstacleBulletCollisionBuffer.loadFromFile("./Sound Effects/Obstacle.wav");
@@ -81,6 +89,7 @@ int main()
 	playerTexture.loadFromFile("Textures/spray.png");
   playerTexture.setSmooth(true);
 	playerSprite.setTexture(playerTexture);
+  playerSprite.setOrigin(playerTexture.getSize().x / 4.0f, 0);
 	//playerSprite.setTextureRect(IntRect(0, 0, boxPixelsX, boxPixelsY));
 
 	// Initializing Bullet and Bullet Sprites
@@ -126,6 +135,14 @@ int main()
   int honeyCombArray[2][gameRows*gameColumns] = {0};
   int honeyCombArrayIndex = 0;
 
+  // making 3 random honeycombs
+  for (int i=0; i<3; i++) {
+    honeyCombArray[0][i] = static_cast<int>(rand()%30)*32;
+    honeyCombArray[1][i] = static_cast<int>(rand()%16)*32;
+  }
+
+  honeyCombArrayIndex+=3;
+
   Texture honeyCombTexture;
   honeyCombTexture.loadFromFile("./Textures/honeycomb.png");
   honeyCombTexture.setSmooth(true);
@@ -153,9 +170,34 @@ int main()
   flowerTexture.setSmooth(true);
   Sprite flowerSprite;
   flowerSprite.setTexture(flowerTexture);
-  Sprite flowerSprites[gameColumns+1] = {flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite};
-  int flowersArray[gameColumns+1] = {0};
+  Sprite flowerSprites[gameColumns+2] = {flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite, flowerSprite};
+  int flowersArray[gameColumns+2] = {0};
   int flowersArrayIndex = 0;
+
+  // humming bird
+
+  Texture TextureBirdRight, TextureBirdLeft, TextureBirdStill;
+  TextureBirdRight.loadFromFile("bird1.png");
+  TextureBirdLeft.loadFromFile("bird2.png");
+  TextureBirdStill.loadFromFile("bird3.png");
+  TextureBirdRight.setSmooth(true);
+  TextureBirdLeft.setSmooth(true);
+  TextureBirdStill.setSmooth(true);
+  Sprite hummingBirdSprite;
+  hummingBirdSprite.setTexture(TextureBirdStill);
+
+  SoundBuffer buffer;
+  buffer.loadFromFile("hummingBirdSound.wav");
+  Sound hummingBirdSound(buffer);
+
+  Clock movementClock;
+  Clock bulletCollisionClock;
+  Clock respawnClock;
+
+  bool hummingbirdVisible = false;
+  int movementCount = 0;
+  int bulletCollisionCount = 0;
+  bool isMovingRight = true;
 
 	// The ground on which player moves
 
@@ -188,7 +230,7 @@ int main()
           break;
 
       case GAME_STATE:
-          runGame(selectedLevel, playerSprite, bulletSprite, bulletClock, gameClock, bullet_x, bullet_y, bullet_exists, beeSprites, groundRectangle, window, boxPixelsX, beePositions, player_x, player_y, honeyCombArray, honeyCombArrayIndex, honeyCombSpriteArray, beeBulletCollisionSound, obstacleBulletCollisionSound, fireSound, beeHiveSprites, beeHiveArray, beeHiveArrayIndex, textureBeeMovingLeft, textureBeeMovingRight, flowersArray, flowersArrayIndex, flowerSprites);
+          runGame(selectedLevel, playerSprite, bulletSprite, bulletClock, gameClock, bullet_x, bullet_y, bullet_exists, beeSprites, groundRectangle, window, boxPixelsX, beePositions, player_x, player_y, honeyCombArray, honeyCombArrayIndex, honeyCombSpriteArray, beeBulletCollisionSound, obstacleBulletCollisionSound, fireSound, beeHiveSprites, beeHiveArray, beeHiveArrayIndex, textureBeeMovingLeft, textureBeeMovingRight, flowersArray, flowersArrayIndex, flowerSprites, honeyCombOrBeeHiveMusic, TextureBirdRight, TextureBirdLeft, TextureBirdStill, hummingBirdSprite, hummingBirdSound, movementClock, bulletCollisionClock, respawnClock, hummingbirdVisible, movementCount, bulletCollisionCount, isMovingRight);
           break;
 
       case EXIT_STATE:
@@ -201,23 +243,83 @@ int main()
 	}
 }
 
-void runGame(int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[5][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[20], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[]) {
+void runGame(int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[5][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[20], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], Sound honeyCombOrBeeHiveMusic, Texture TextureBirdRight, Texture TextureBirdLeft, Texture TextureBirdStill, Sprite& hummingBirdSprite, Sound hummingBirdSound, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, bool& hummingbirdVisible, int& movementCount, int& bulletCollisionCount, bool& isMovingRight) {
     // Using selectedLevel to modify game difficulty
-
     switch (selectedLevel) {
         case 0:
+          bool isOnObstacle = false; // isOnObstacle set to true if player is on an obstacle
+          for (int a=0; a<flowersArrayIndex; a++) {
+            if (player_x == flowersArray[a]) {
+              isOnObstacle = true;
+            }
+          }
+          int player_x_right = -1;
+          int player_x_left = -1;
+          if (isOnObstacle) {
+            for (int b=player_x; b<=928; b+=32) {
+              bool isMoveable = true;
+              for (int c=0; c<flowersArrayIndex; c++) {
+                if (flowersArray[c] == b) {
+                  isMoveable = false;
+                  break;
+                }
+              }
+              if (isMoveable) {
+                player_x_right = b;
+                break;
+              }
+            }
+            
+
+            for (int b=player_x; b>=0; b-=32) {
+              bool isMoveable = true;
+              for (int c=0; c<flowersArrayIndex; c++) {
+                if (flowersArray[c] == b) {
+                  isMoveable = false;
+                  break;
+                }
+              }
+              if (isMoveable) {
+                player_x_left = b;
+                break;
+              }
+            }
+
+            // Choose the closer unflowered space
+            if (player_x_right == -1) {
+                player_x = player_x_left;
+            } else if (player_x_left == -1) {
+                player_x = player_x_right;
+            } else {
+                player_x = (player_x - player_x_left > player_x_right - player_x) 
+                    ? player_x_right 
+                    : player_x_left;
+            }
+          }
     	    Event e;
           while (window.pollEvent(e)) {
             if (e.type == Event::Closed) {
               exit(0);
               return;
             } else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Right) {
-              if (static_cast<int>(player_x)!=928) {
+              bool isObstacle = false; // isObstacle set to true if there's a flower to the right
+              for (int i = 0; i < flowersArrayIndex; i++) {
+                if (player_x+32 == flowersArray[i]) {
+                  isObstacle = true;
+                }
+              }
+              if (static_cast<int>(player_x)!=928 && !isObstacle) {
                 player_x+=boxPixelsX;
                 bullet_x+= bullet_exists ? 0 : boxPixelsX;
               }
             } else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Left) {
-              if (static_cast<int>(player_x)!=0) {
+              bool isObstacle = false; // isObstacle set to true if there's a flower to the left
+              for (int i = 0; i < flowersArrayIndex; i++) {
+                if (player_x-32 == flowersArray[i]) {
+                  isObstacle = true;
+                }
+              }
+              if (static_cast<int>(player_x)!=0 && !isObstacle) {
                 player_x-=boxPixelsX;
                 bullet_x-= bullet_exists ? 0 : boxPixelsX;
               }
@@ -244,6 +346,8 @@ void runGame(int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clo
           {
             moveBullet(bullet_y, bullet_exists, bulletClock, fireSound);
             drawBullet(window, bullet_x, bullet_y, bulletSprite);
+            checkBulletHoneyCombCollision(bullet_x, bullet_y, honeyCombArray, honeyCombArrayIndex, bullet_exists, honeyCombOrBeeHiveMusic);
+            checkBulletBeeHiveCollision(bullet_x, bullet_y, beeHiveArray, beeHiveArrayIndex, bullet_exists, honeyCombOrBeeHiveMusic);
           }
           else
           {
@@ -392,19 +496,19 @@ int handleLevelSelectInput(RenderWindow& window, int& selectedLevel, int& curren
 
         // Keyboard input for level selection
         if (event.type == Event::KeyPressed) {
-            switch (event.key.code) {
-                case Keyboard::Up:
-                    selectedLevel = (selectedLevel - 1 + 3) % 3;
-                    break;
-                case Keyboard::Down:
-                    selectedLevel = (selectedLevel + 1) % 3;
-                    break;
-                case Keyboard::Enter:
-                    currentState = 2; // GAME_STATE
-                    return 2;
-                case Keyboard::Escape:
-                    currentState = 0; // MENU_STATE
-                    return 0;
+          switch (event.key.code) {
+            case Keyboard::Up:
+              selectedLevel = (selectedLevel - 1 + 3) % 3;
+              break;
+            case Keyboard::Down:
+              selectedLevel = (selectedLevel + 1) % 3;
+              break;
+            case Keyboard::Enter:
+              currentState = 2; // GAME_STATE
+              return 2;
+            case Keyboard::Escape:
+              currentState = 0; // MENU_STATE
+              return 0;
             }
         }
     }
@@ -432,35 +536,59 @@ void drawBullet(RenderWindow& window, float& bullet_x, float& bullet_y, Sprite b
 
 // function to move bee
 void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, int& honeyCombArrayIndex, RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[]) {
-  if (beeClock.getElapsedTime().asSeconds() < 0.3)
+  if (beeClock.getElapsedTime().asSeconds() < 0.18)
     return;
 
   beeClock.restart();
 
   if (beePositions[3][i]) { // if bee moving right
     // Check if bee is on last row, then create flowers
-    if (beePositions[1][i] == 544) {
-      // cout<< "reached bottom"<< endl;
-          // cout<< beePositions[0][i]<< endl;
-      bool flowerAlreadyDrawn = false;
-      bool nextFlowerAlreadyDrawn = false;
-      for (int a=0; a<gameColumns+1; a++) {
-        if (flowersArray[a] == beePositions[0][i]) {
-          flowerAlreadyDrawn = true;
-        }
-        if (flowersArray[a] == beePositions[0][i]+32 || beePositions[0][i] == 928) {
-          nextFlowerAlreadyDrawn = true;
-        }
-      }
-      if (!flowerAlreadyDrawn) {
-        flowersArray[flowersArrayIndex] = beePositions[0][i];
-        flowersArrayIndex++;
-      }
+    if (beePositions[1][i] == 512 || beePositions[1][i] == 544) {
+        bool flowerAlreadyDrawn32 = false;
+        bool flowerAlreadyDrawn64 = false;
 
-      if (!nextFlowerAlreadyDrawn) {
-        flowersArray[flowersArrayIndex] = beePositions[0][i]+32;
-        flowersArrayIndex++;
-      }
+        for (int a = 0; a < gameColumns+2; a++) {
+            if (flowersArray[a] == beePositions[0][i]+32) {
+                flowerAlreadyDrawn32 = true;
+            }
+            if (flowersArray[a] == beePositions[0][i]+64) {
+                flowerAlreadyDrawn64 = true;
+            }
+        }
+
+        // If 32px is unflowered, create it
+        if (!flowerAlreadyDrawn32 && beePositions[0][i]+32 <= 928 && beePositions[0][i]+32 >= 0) {
+            flowersArray[flowersArrayIndex] = beePositions[0][i]+32;
+            flowersArrayIndex++;
+
+            if (beePositions[0][i]+32 == 32) {
+              flowersArray[flowersArrayIndex] = 0;
+              flowersArrayIndex++;
+            }
+
+            if (beePositions[0][i]+32 == 896) {
+              flowersArray[flowersArrayIndex] = 928;
+              flowersArrayIndex++;
+            }
+
+            // If 64px is also unflowered, create it
+            if (!flowerAlreadyDrawn64 && beePositions[0][i]+64 <= 928 && beePositions[0][i]+64 >= 0) {
+                flowersArray[flowersArrayIndex] = beePositions[0][i]+64;
+                flowersArrayIndex++;
+                if (beePositions[0][i]+64 == 32) {
+                  flowersArray[flowersArrayIndex] = 0;
+                  flowersArrayIndex++;
+                }
+
+                if (beePositions[0][i]+32 == 896) {
+                  flowersArray[flowersArrayIndex] = 928;
+                  flowersArrayIndex++;
+                }
+            }
+
+            // set bee's y position to 9999999 AFTER creating flowers
+            beePositions[1][i] = 9999999;
+        }
     }
     
     // Check if a beehive can be created
@@ -508,27 +636,55 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
 
   } else { // if bee moving left
     // Check if bee is on last row, then create flowers
-    if (beePositions[1][i] == 544) {
-      // cout<< "reached bottom"<< endl;
-      bool flowerAlreadyDrawn = false;
-      bool nextFlowerAlreadyDrawn = false;
-      for (int a=0; a<gameColumns+1; a++) {
-        if (flowersArray[a] == beePositions[0][i]) {
-          flowerAlreadyDrawn = true;
-        }
-        if (flowersArray[a] == beePositions[0][i]+32 || beePositions[0][i] == 928) {
-          nextFlowerAlreadyDrawn = true;
-        }
-      }
-      if (!flowerAlreadyDrawn) {
-        flowersArray[flowersArrayIndex] = beePositions[0][i];
-        flowersArrayIndex++;
-      }
+    if (beePositions[1][i] == 512 || beePositions[1][i] == 544) {
+        bool flowerAlreadyDrawn32 = false;
+        bool flowerAlreadyDrawn64 = false;
 
-      if (!nextFlowerAlreadyDrawn) {
-        flowersArray[flowersArrayIndex] = beePositions[0][i]+32;
-        flowersArrayIndex++;
-      }
+        for (int a = 0; a < gameColumns+2; a++) {
+            if (flowersArray[a] == beePositions[0][i]-32) {
+                flowerAlreadyDrawn32 = true;
+            }
+            if (flowersArray[a] == beePositions[0][i]-64) {
+                flowerAlreadyDrawn64 = true;
+            }
+        }
+
+        // If 32px is unflowered, create it
+        if (!flowerAlreadyDrawn32 && beePositions[0][i]-32 <= 928 && beePositions[0][i]-32 >= 0) {
+            flowersArray[flowersArrayIndex] = beePositions[0][i]-32;
+            flowersArrayIndex++;
+
+            if (beePositions[0][i]-32 == 32) {
+              flowersArray[flowersArrayIndex] = 0;
+              flowersArrayIndex++;
+            }
+
+            if (beePositions[0][i]-32 == 896) {
+              flowersArray[flowersArrayIndex] = 928;
+              flowersArrayIndex++;
+            }
+
+            // If 64px is also unflowered, create it
+            if (!flowerAlreadyDrawn64 && beePositions[0][i]-64 <= 928 && beePositions[0][i]-64 >= 0) {
+                flowersArray[flowersArrayIndex] = beePositions[0][i]-64;
+                flowersArrayIndex++;
+                if (beePositions[0][i]-64 == 32) {
+                  flowersArray[flowersArrayIndex] = 0;
+                  flowersArrayIndex++;
+                }
+                if (beePositions[0][i]-64 == 896) {
+                  flowersArray[flowersArrayIndex] = 928;
+                  flowersArrayIndex++;
+                }
+            }
+
+            if (beePositions[0][i]-32 == 32) {
+              flowersArray[flowersArrayIndex] = 0;
+              flowersArrayIndex++;
+            }
+            // set bee's y position to 9999999 AFTER creating flowers
+            beePositions[1][i] = 9999999;
+        }
     }
 
     // Check if a beehive can be created
@@ -560,20 +716,8 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
     }
 
     // Check if reached left edge
-    bool FlowerOnFirstCol = false;
     if (beePositions[0][i] == 0 && !beePositions[2][i]) {
       beePositions[2][i] = 1;
-      if (beePositions[1][i] == 544) {
-        for (int a=0; a<flowersArrayIndex; a++) {
-          if (flowersArray[a] == 0) {
-            FlowerOnFirstCol = true;
-          }
-        }
-        if (!FlowerOnFirstCol) {
-          flowersArray[flowersArrayIndex] = 0;
-          flowersArrayIndex++;
-        }
-      }
       return;
     } else if (beePositions[0][i] == 0 && beePositions[2][i]) {
       beePositions[1][i] += boxPixelsY;  // Move down to next row
@@ -653,5 +797,29 @@ void drawFlowers(RenderWindow& window, int flowersArray[], int& flowersArrayInde
   for (int i=0; i<flowersArrayIndex; i++) {
     flowerSprites[i].setPosition(flowersArray[i], 544);
     window.draw(flowerSprites[i]);
+  }
+}
+
+void checkBulletHoneyCombCollision(float bullet_x, float bullet_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound honeyCombOrBeeHiveMusic) {
+  for (int i=0; i<honeyCombArrayIndex; i++) {
+    if (bullet_x == honeyCombArray[0][i] && bullet_y == honeyCombArray[1][i]) {// if collision occurs
+      honeyCombArray[1][i] = 99999999;
+      bullet_exists = false;
+      // play music
+      honeyCombOrBeeHiveMusic.play();
+      sleep(seconds(0.1)); // so that the sound can be heard
+    }
+  }
+}
+
+void checkBulletBeeHiveCollision(float bullet_x, float bullet_y, int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, bool& bullet_exists, Sound honeyCombOrBeeHiveMusic) {
+  for (int i=0; i<beeHiveArrayIndex; i++) {
+    if (bullet_x == beeHiveArray[0][i] && bullet_y == beeHiveArray[1][i]) {// if collision occurs
+      beeHiveArray[1][i] = 99999999;
+      bullet_exists = false;
+      // play music
+      honeyCombOrBeeHiveMusic.play();
+      sleep(seconds(0.1)); // so that the sound can be heard
+    }
   }
 }
