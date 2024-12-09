@@ -26,13 +26,13 @@ int handleMenuInput(RenderWindow& window, int& selectedOption, int& currentState
 void drawLevelSelect(RenderWindow& window, int& selectedLevel, int& currentState);
 int handleLevelSelectInput(RenderWindow& window, int& selectedLevel, int& currentState);
 void initializeGameResources();
-void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[5][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[40], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], Sound, Texture TextureBirdRight, Texture TextureBirdLeft, Texture TextureBirdStill, Sprite& hummingBirdSprite, Sound hummingBirdSound, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, RectangleShape bigRectangles[], float rectangleHeights[], int& numberOfRectangles, int& score, bool&, Music&, Clock& fastBeeClock, Texture TextureFastBeeMovingLeft, Texture TextureFastBeeMovingRight, Sprite fastBeeSprites[], float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, Texture redHoneyCombTexture, Sprite redHoneyCombSpriteArray[], int& totalShots, bool& scoreGreaterThan20k, bool& scoreGreaterThan40k, bool& scoreGreaterThan80k, bool& scoreGreaterThan160k, bool& scoreGreaterThan240k, bool& scoreGreaterThan320k, int powerUpsArray[][400], Sprite powerUpsSprites[400], int& powerUpsArrayIndex, Texture HeightDecTexture, Texture HeightIncTexture, Texture speedUpTexture, Texture speedDecTexture, int powersOfPlayer[], Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, RectangleShape progressBars[4]);
-void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite);
+void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[40], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], Sound, Texture TextureBirdRight, Texture TextureBirdLeft, Texture TextureBirdStill, Sprite& hummingBirdSprite, Sound hummingBirdSound, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, RectangleShape bigRectangles[], float rectangleHeights[], int& numberOfRectangles, int& score, bool&, Music&, Clock& fastBeeClock, Texture TextureFastBeeMovingLeft, Texture TextureFastBeeMovingRight, Sprite fastBeeSprites[], float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, Texture redHoneyCombTexture, Sprite redHoneyCombSpriteArray[], int& totalShots, bool& scoreGreaterThan20k, bool& scoreGreaterThan40k, bool& scoreGreaterThan80k, bool& scoreGreaterThan160k, bool& scoreGreaterThan240k, bool& scoreGreaterThan320k, int powerUpsArray[][400], Sprite powerUpsSprites[400], int& powerUpsArrayIndex, Texture HeightDecTexture, Texture HeightIncTexture, Texture speedUpTexture, Texture speedDecTexture, int powersOfPlayer[], Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, RectangleShape progressBars[4], RectangleShape& filledBody);
+void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite, int totalShots, int bulletCount, RectangleShape& filledBody);
 void moveBullet(float& bullet_y, bool& bullet_exists, Clock& bulletClock, Sound fireSound);
 void drawBullet(RenderWindow& window, float& bullet_x, float& bullet_y, Sprite beeSprite);
-void moveBee(float beePositions[5][20], Clock&, int, int[][gameRows*gameColumns], int[][gameRows*gameColumns], int& beeHiveArrayIndex, int& honeyCombArrayIndex, RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], int redHoneyCombArray[][gameRows*gameColumns]);
-void drawBee(RenderWindow&, float beePositions[5][20], Sprite beeSprites[20], int, Texture, Texture);
-void checkBulletBeeCollision(float bullet_x, float bullet_y, float beePositions[5][20], int i, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound beeBulletCollisionSound, int& score);
+void moveBee(float beePositions[][20], Clock&, int, int[][gameRows*gameColumns], int[][gameRows*gameColumns], int& beeHiveArrayIndex, int& honeyCombArrayIndex, RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], int redHoneyCombArray[][gameRows*gameColumns]);
+void drawBee(RenderWindow&, float beePositions[][20], Sprite beeSprites[20], int, Texture, Texture);
+void checkBulletBeeCollision(float bullet_x, float bullet_y, float beePositions[][20], int i, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound beeBulletCollisionSound, int& score);
 void drawHoneyCombs(int honeyCombArray[][gameRows*gameColumns], int honeyCombArrayIndex, RenderWindow& window, Sprite honeyCombSpriteArray[]);
 void drawBeeHives(int beeHiveArray[][gameRows*gameColumns], int beeHiveArrayIndex, RenderWindow& window, Sprite beeHiveSprites[]);
 void drawFlowers(RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[]);
@@ -45,22 +45,22 @@ void determineBirdMovement(Clock& gameClock, Clock& movementClock, Clock& respaw
 void drawScore(RenderWindow& window, int score);
 int checkLevelComplete(float beePositions[][20], int flowersArrayIndex, int bulletCount, int selectedLevel, float fastBeePositions[][15], int totalShots);
 int drawNameInput(RenderWindow& window, char* name, int maxLength, int& charCount, int score);
-void resetForLevel1(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[5][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, float rectangleHeights[], int& numberOfRectangles, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots);
+void resetForLevel1(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, float rectangleHeights[], int& numberOfRectangles, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots);
 void countHivePoints(int beeHiveArray[][gameRows*gameColumns], int beeHiveArrayIndex, int& score);
 void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[]);
 void drawFastBee(RenderWindow& window, float beePositions[][15], Sprite fastBeeSprites[], int i, Texture textureFastBeeMovingRight, Texture textureFastBeeMovingLeft);
 void checkBulletFastBeeCollision(int bullet_x, int bullet_y, float fastBeePositions[][15], int i, int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, bool& bullet_exists, Sound beeBulletCollisionSound, int& score);
 void drawRedHoneyCombs(int honeyCombArray[][gameRows*gameColumns], int honeyCombArrayIndex, RenderWindow& window, Sprite honeyCombSpriteArray[]);
 void checkBulletRedHoneyCombCollision(float bullet_x, float bullet_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound honeyCombOrBeeHiveMusic);
-void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[5][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots);
-void resetForLevel3(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[5][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, float rectangleHeights[], int& numberOfRectangles, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots, int selectedLevel);
+void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots);
+void resetForLevel3(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, float rectangleHeights[], int& numberOfRectangles, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots, int selectedLevel);
 void determineNumberOfRectangles(int& numberOfRectangles, int bulletCount, int score, int& totalShots, bool& scoreGreaterThan20k, bool& scoreGreaterThan40k, bool& scoreGreaterThan80k, bool& scoreGreaterThan160k, bool& scoreGreaterThan240k, bool& scoreGreaterThan320k);
 void checkBulletRedHoneyCombCollisionForLevel4(float bullet_x, float bullet_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound honeyCombOrBeeHiveMusic, int powerUpsArray[][400], int& powerUpsArrayIndex);
 void movePowerUp(int powerUpsArray[][400], int powerUpsArrayIndex, int i);
 void drawPowerUp(int powerUpsArray[][400], int powerUpsArrayIndex, int i, RenderWindow& window, Sprite powerUpsSprites[], Texture HeightDecTexture, Texture HeightIncTexture, Texture speedUpTexture, Texture speedDecTexture);
 void determineBirdMovementForLevel4(Clock& gameClock, Clock& movementClock, Clock& respawnClock, int& moveToX, int& moveToY, int& movementCount, bool& combFound, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, int& score, Texture TextureBirdRight, Texture TextureBirdLeft, Sprite& hummingBirdSprite, bool& redCombFound, int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int powerUpsArray[][400], int& powerUpsArrayIndex);
 void updatePowerUpsArray(int powerUpsArray[][400], int& powerUpsArrayIndex, int player_x, int player_y, int powersOfPlayer[], Clock powersOfPlayerClocks[]);
-void drawPlayerForLevel4(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite, Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, int powersOfPlayer[]);
+void drawPlayerForLevel4(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite, Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, int powersOfPlayer[], RectangleShape& filledBody, int bulletCount, int totalShots);
 void handlePowerUpsTime(int powerUpsArray[][400], int& powerUpsArrayIndex, int powersOfPlayer[], Clock powersOfPlayerClocks[], float& player_x, RectangleShape progressBars[4], RenderWindow& window);
 void drawHighScores(RenderWindow& window, char name[], int score, int& currentState, int charCount);
 
@@ -140,13 +140,14 @@ int main()
   textureBeeMovingRight.setSmooth(true);
   Sprite beeSprites[20] = {Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite()};
 
-  float beePositions[5][20];
+  float beePositions[6][20];
   for (int i = 0; i < 20; i++) {
     beePositions[0][i] = (rand() % 2 == 0) ? 0 : resolutionX-32; // bee_x
     beePositions[1][i] = 0; // bee_y
     beePositions[2][i] = 0; // moveDown flag
     beePositions[3][i] = static_cast<int>(beePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     beePositions[4][i] = 0; // isNextHoneyComb flag
+    beePositions[5][i] = 0; // hasMadeFlower flag
   }
 
   // The fast bee sprite
@@ -160,13 +161,14 @@ int main()
   textureFastBeeMovingRight.setSmooth(true);
   Sprite fastBeeSprites[15] = {Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite(), Sprite()};
 
-  float fastBeePositions[5][15];
+  float fastBeePositions[6][15];
   for (int i = 0; i < 15; i++) {
     fastBeePositions[0][i] = (rand() % 2 == 0) ? 0 : resolutionX-32; // bee_x
     fastBeePositions[1][i] = 0; // bee_y
     fastBeePositions[2][i] = 0; // moveDown flag
     fastBeePositions[3][i] = static_cast<int>(fastBeePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     fastBeePositions[4][i] = 0; // isNextHoneyComb flag
+    fastBeePositions[5][i] = 0; // hasMadeFlower flag
   }
 
   // Honeycomb
@@ -251,6 +253,8 @@ int main()
   bool scoreGreaterThan160k = false;
   bool scoreGreaterThan240k = false;
   bool scoreGreaterThan320k = false;
+  RectangleShape filledBody;
+  filledBody.setFillColor(Color::White);
 
   // Score counter
   int score = 0;
@@ -330,7 +334,7 @@ int main()
           break;
 
       case GAME_STATE:
-          runGame(currentState,selectedLevel, playerSprite, bulletSprite, bulletClock, gameClock, bullet_x, bullet_y, bullet_exists, beeSprites, groundRectangle, window, boxPixelsX, beePositions, player_x, player_y, honeyCombArray, honeyCombArrayIndex, honeyCombSpriteArray, beeBulletCollisionSound, obstacleBulletCollisionSound, fireSound, beeHiveSprites, beeHiveArray, beeHiveArrayIndex, textureBeeMovingLeft, textureBeeMovingRight, flowersArray, flowersArrayIndex, flowerSprites, honeyCombOrBeeHiveMusic, TextureBirdRight, TextureBirdLeft, TextureBirdStill, hummingBirdSprite, hummingBirdSound, movementClock, bulletCollisionClock, respawnClock, movementCount, bulletCollisionCount, bulletCount, bigRectangles, rectangleHeights, numberOfRectangles, score, firstTime, bgMusic, fastBeeClock, textureFastBeeMovingLeft, textureFastBeeMovingRight, fastBeeSprites, fastBeePositions, redHoneyCombArray, redHoneyCombArrayIndex, redHoneyCombTexture, redHoneyCombSpriteArray, totalShots, scoreGreaterThan20k, scoreGreaterThan40k, scoreGreaterThan80k, scoreGreaterThan160k, scoreGreaterThan240k, scoreGreaterThan320k, powerUpsArray, powerUpsSprites, powerUpsArrayIndex, HeightDecTexture, HeightIncTexture, speedUpTexture, speedDecTexture, powersOfPlayer, sprayCanHalfTexture, sprayCanDoubleTexture, playerTexture, progressBars);
+          runGame(currentState,selectedLevel, playerSprite, bulletSprite, bulletClock, gameClock, bullet_x, bullet_y, bullet_exists, beeSprites, groundRectangle, window, boxPixelsX, beePositions, player_x, player_y, honeyCombArray, honeyCombArrayIndex, honeyCombSpriteArray, beeBulletCollisionSound, obstacleBulletCollisionSound, fireSound, beeHiveSprites, beeHiveArray, beeHiveArrayIndex, textureBeeMovingLeft, textureBeeMovingRight, flowersArray, flowersArrayIndex, flowerSprites, honeyCombOrBeeHiveMusic, TextureBirdRight, TextureBirdLeft, TextureBirdStill, hummingBirdSprite, hummingBirdSound, movementClock, bulletCollisionClock, respawnClock, movementCount, bulletCollisionCount, bulletCount, bigRectangles, rectangleHeights, numberOfRectangles, score, firstTime, bgMusic, fastBeeClock, textureFastBeeMovingLeft, textureFastBeeMovingRight, fastBeeSprites, fastBeePositions, redHoneyCombArray, redHoneyCombArrayIndex, redHoneyCombTexture, redHoneyCombSpriteArray, totalShots, scoreGreaterThan20k, scoreGreaterThan40k, scoreGreaterThan80k, scoreGreaterThan160k, scoreGreaterThan240k, scoreGreaterThan320k, powerUpsArray, powerUpsSprites, powerUpsArrayIndex, HeightDecTexture, HeightIncTexture, speedUpTexture, speedDecTexture, powersOfPlayer, sprayCanHalfTexture, sprayCanDoubleTexture, playerTexture, progressBars, filledBody);
           break;
 
 
@@ -343,7 +347,7 @@ int main()
 
 	}
 }
-void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[5][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], Sound honeyCombOrBeeHiveMusic, Texture TextureBirdRight, Texture TextureBirdLeft, Texture TextureBirdStill, Sprite& hummingBirdSprite, Sound hummingBirdSound, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, RectangleShape bigRectangles[], float rectangleHeights[], int& numberOfRectangles, int& score, bool& firstTime, Music& bgMusic, Clock& fastBeeClock, Texture TextureFastBeeMovingLeft, Texture TextureFastBeeMovingRight, Sprite fastBeeSprites[], float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, Texture redHoneyCombTexture, Sprite redHoneyCombSpriteArray[], int& totalShots, bool& scoreGreaterThan20k, bool& scoreGreaterThan40k, bool& scoreGreaterThan80k, bool& scoreGreaterThan160k, bool& scoreGreaterThan240k, bool& scoreGreaterThan320k, int powerUpsArray[][400], Sprite powerUpsSprites[400], int& powerUpsArrayIndex, Texture HeightDecTexture, Texture HeightIncTexture, Texture speedUpTexture, Texture speedDecTexture, int powersOfPlayer[], Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, RectangleShape progressBars[4]) {
+void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite& bulletSprite, Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, Sprite beeSprites[20], RectangleShape& groundRectangle, RenderWindow& window, int boxPixelsX, float beePositions[][20], float& player_x, float& player_y, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, Sprite honeyCombSpriteArray[], Sound beeBulletCollisionSound, Sound obstacleBulletCollisionSound, Sound fireSound, Sprite beeHiveSprites[], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, Texture textureBeeMovingLeft, Texture textureBeeMovingRight, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], Sound honeyCombOrBeeHiveMusic, Texture TextureBirdRight, Texture TextureBirdLeft, Texture TextureBirdStill, Sprite& hummingBirdSprite, Sound hummingBirdSound, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, RectangleShape bigRectangles[], float rectangleHeights[], int& numberOfRectangles, int& score, bool& firstTime, Music& bgMusic, Clock& fastBeeClock, Texture TextureFastBeeMovingLeft, Texture TextureFastBeeMovingRight, Sprite fastBeeSprites[], float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, Texture redHoneyCombTexture, Sprite redHoneyCombSpriteArray[], int& totalShots, bool& scoreGreaterThan20k, bool& scoreGreaterThan40k, bool& scoreGreaterThan80k, bool& scoreGreaterThan160k, bool& scoreGreaterThan240k, bool& scoreGreaterThan320k, int powerUpsArray[][400], Sprite powerUpsSprites[400], int& powerUpsArrayIndex, Texture HeightDecTexture, Texture HeightIncTexture, Texture speedUpTexture, Texture speedDecTexture, int powersOfPlayer[], Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, RectangleShape progressBars[4], RectangleShape& filledBody) {
     // Using selectedLevel to modify game difficulty
     if (selectedLevel==0) {
           window.clear();
@@ -479,7 +483,7 @@ void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite
           }
 
           // drawing different stuff
-          drawPlayer(window, player_x, player_y, playerSprite);
+          drawPlayer(window, player_x, player_y, playerSprite, totalShots, bulletCount, filledBody);
           window.draw(groundRectangle);
           drawScore(window, score);
           drawSprayCans(window, bigRectangles, rectangleHeights, numberOfRectangles, bulletCount);
@@ -652,7 +656,7 @@ void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite
           }
 
           // drawing different stuff
-          drawPlayer(window, player_x, player_y, playerSprite);
+          drawPlayer(window, player_x, player_y, playerSprite, totalShots, bulletCount, filledBody);
           window.draw(groundRectangle);
           drawScore(window, score);
           drawSprayCans(window, bigRectangles, rectangleHeights, numberOfRectangles, bulletCount);
@@ -826,7 +830,7 @@ void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite
           }
 
           // drawing different stuff
-          drawPlayer(window, player_x, player_y, playerSprite);
+          drawPlayer(window, player_x, player_y, playerSprite, totalShots, bulletCount, filledBody);
           window.draw(groundRectangle);
           drawScore(window, score);
           drawSprayCans(window, bigRectangles, rectangleHeights, numberOfRectangles, bulletCount);
@@ -1037,7 +1041,7 @@ void runGame(int& currentState, int& selectedLevel, Sprite& playerSprite, Sprite
           drawBeeHives(beeHiveArray, beeHiveArrayIndex, window, beeHiveSprites);
           drawHoneyCombs(honeyCombArray, honeyCombArrayIndex, window, honeyCombSpriteArray);
           drawRedHoneyCombs(redHoneyCombArray, redHoneyCombArrayIndex, window, redHoneyCombSpriteArray);
-          drawPlayerForLevel4(window, player_x, player_y, playerSprite, sprayCanHalfTexture, sprayCanDoubleTexture, playerTexture, powersOfPlayer);
+          drawPlayerForLevel4(window, player_x, player_y, playerSprite, sprayCanHalfTexture, sprayCanDoubleTexture, playerTexture, powersOfPlayer, filledBody, bulletCount, totalShots);
           window.draw(hummingBirdSprite);
 
           // 0 for lose, 1 for restart, 2 for win, 3 for continue with the current level, 4 for winning the last level
@@ -1286,23 +1290,39 @@ int handleLevelSelectInput(RenderWindow& window, int& selectedLevel, int& curren
 }
 
 // for displaying the trash can
-void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite) {
+void drawPlayer(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite, int totalShots, int bulletCount, RectangleShape& filledBody) {
+  filledBody.setPosition(player_x, player_y+30);
+  filledBody.setSize(Vector2f(32, ((totalShots-bulletCount-1)%56)/2));
 	playerSprite.setPosition(player_x, player_y);
 	window.draw(playerSprite);
+  window.draw(filledBody);
 }
 
-void drawPlayerForLevel4(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite, Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, int powersOfPlayer[]) {
+void drawPlayerForLevel4(RenderWindow& window, float& player_x, float& player_y, Sprite& playerSprite, Texture sprayCanHalfTexture, Texture sprayCanDoubleTexture, Texture playerTexture, int powersOfPlayer[], RectangleShape& filledBody, int bulletCount, int totalShots) {
   // setTexture was not working so I used setScale
   if (powersOfPlayer[2] >= 1) {
     // playerSprite.setTexture(sprayCanDoubleTexture);
     playerSprite.setScale(1.5, 1.5);
     player_y = (gameRows - 5) * boxPixelsY;
+    filledBody.setPosition(player_x, player_y+30);
+    filledBody.setSize(Vector2f(32, ((totalShots-bulletCount-1)%56)/2));
+    filledBody.setScale(1.5, 1.5);
+    window.draw(filledBody);
   } else if (powersOfPlayer[3] >= 1) {
     // playerSprite.setTexture(sprayCanDoubleTexture);
     playerSprite.setScale(.75, .75);
+    filledBody.setPosition(player_x, player_y+30);
+    filledBody.setSize(Vector2f(32, ((totalShots-bulletCount-1)%56)/2));
+    filledBody.setScale(.75, .75);
+    window.draw(filledBody);
     player_y = (gameRows - 3) * boxPixelsY - 20;
   } else {
-    playerSprite.setTexture(playerTexture);
+    filledBody.setPosition(player_x, player_y+30);
+    filledBody.setSize(Vector2f(32, ((totalShots-bulletCount-1)%56)/2));
+    filledBody.setScale(1, 1);
+    playerSprite.setPosition(player_x, player_y);
+    window.draw(playerSprite);
+    window.draw(filledBody);
     playerSprite.setScale(1, 1);
     player_y = (gameRows - 4) * boxPixelsY;
   }
@@ -1325,15 +1345,15 @@ void drawBullet(RenderWindow& window, float& bullet_x, float& bullet_y, Sprite b
 }
 
 // function to move bee
-void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, int& honeyCombArrayIndex, RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], int redHoneyCombArray[][gameRows*gameColumns]) {
-  if (beeClock.getElapsedTime().asSeconds() < 0.16)
+void moveBee(float beePositions[][20], Clock& beeClock, int i, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int& beeHiveArrayIndex, int& honeyCombArrayIndex, RenderWindow& window, int flowersArray[], int& flowersArrayIndex, Sprite flowerSprites[], int redHoneyCombArray[][gameRows*gameColumns]) {
+  if (beeClock.getElapsedTime().asSeconds() < 0.08)
     return;
 
   beeClock.restart();
 
   if (beePositions[3][i]) { // if bee moving right
     // Check if bee is on last row, then create flowers
-    if (beePositions[1][i] == 448 || beePositions[1][i] == 480) {
+    if (beePositions[1][i] == 448) {
         bool flowerAlreadyDrawn32 = false;
 
         for (int a = 0; a < gameColumns+2; a++) {
@@ -1343,7 +1363,8 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
         }
 
         // If 32px is unflowered, create it
-        if (!flowerAlreadyDrawn32 && beePositions[0][i]+32 <= 672 && beePositions[0][i]+32 >= 0) {
+        if (!flowerAlreadyDrawn32 && beePositions[0][i]+32 <= 672 && beePositions[0][i]+32 >= 0 && !beePositions[5][i]) {
+            beePositions[5][i] = 1;
             flowersArray[flowersArrayIndex] = beePositions[0][i]+32;
             flowersArrayIndex++;
 
@@ -1356,10 +1377,18 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
               flowersArray[flowersArrayIndex] = 672;
               flowersArrayIndex++;
             }
-
-            // set bee's y position to 99999999 AFTER creating flowers
-            beePositions[1][i] = 99999999;
+            
+            beePositions[3][i] = 0;
         }
+      // set bee's y position to 99999999 AFTER creating flowers
+      if ((beePositions[0][i] == 0 || beePositions[0][i] == 672)&&beePositions[5][i]) { // if reached edge of screen then make them disappear
+        beePositions[1][i] = 99999999;
+      }
+    }
+
+    // if reached flowers then also make them disappear
+    if (beePositions[1][i] == 480) {
+      beePositions[1][i] = 99999999;
     }
     
     // Check if a beehive can be created
@@ -1410,7 +1439,7 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
     }
   } else { // if bee moving left
     // Check if bee is on last row, then create flowers
-    if (beePositions[1][i] == 448 || beePositions[1][i] == 480) {
+    if (beePositions[1][i] == 448) {
         bool flowerAlreadyDrawn32 = false;
 
         for (int a = 0; a < gameColumns+2; a++) {
@@ -1420,7 +1449,8 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
         }
 
         // If 32px is unflowered, create it
-        if (!flowerAlreadyDrawn32 && beePositions[0][i]-32 <= 672 && beePositions[0][i]-32 >= 0) {
+        if (!flowerAlreadyDrawn32 && beePositions[0][i]-32 <= 672 && beePositions[0][i]-32 >= 0 && !beePositions[5][i]) {
+            beePositions[5][i] = 1;
             flowersArray[flowersArrayIndex] = beePositions[0][i]-32;
             flowersArrayIndex++;
 
@@ -1433,10 +1463,18 @@ void moveBee(float beePositions[5][20], Clock& beeClock, int i, int honeyCombArr
               flowersArray[flowersArrayIndex] = 672;
               flowersArrayIndex++;
             }
-
-            // set bee's y position to 9999999 AFTER creating flowers
-            beePositions[1][i] = 9999999;
+            
+            beePositions[3][i] = 1; // make it go right after making flowers
         }
+      // set bee's y position to 9999999 AFTER creating flowers
+      if ((beePositions[0][i] == 0 || beePositions[0][i] == 672)&&beePositions[5][i]) { // if reached edge of screen then make them disappear
+        beePositions[1][i] = 9999999;
+      }
+    }
+
+    // if reached flowers then also make them disappear
+    if (beePositions[1][i] == 480) {
+      beePositions[1][i] = 99999999;
     }
 
     // Check if a beehive can be created
@@ -1499,7 +1537,7 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
 
   if (beePositions[3][i]) { // if bee moving right
     // Check if bee is on last row, then create flowers
-    if (beePositions[1][i] == 448 || beePositions[1][i] == 480) {
+    if (beePositions[1][i] == 448) {
         bool flowerAlreadyDrawn32 = false;
 
         for (int a = 0; a < gameColumns+2; a++) {
@@ -1509,7 +1547,8 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
         }
 
         // If 32px is unflowered, create it
-        if (!flowerAlreadyDrawn32 && beePositions[0][i]+32 <= 672 && beePositions[0][i]+32 >= 0) {
+        if (!flowerAlreadyDrawn32 && beePositions[0][i]+32 <= 672 && beePositions[0][i]+32 >= 0 && !beePositions[5][i]) {
+            beePositions[5][i] = 1;
             flowersArray[flowersArrayIndex] = beePositions[0][i]+32;
             flowersArrayIndex++;
 
@@ -1523,8 +1562,12 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
               flowersArrayIndex++;
             }
 
-            // set bee's y position to 99999999 AFTER creating flowers
-            beePositions[1][i] = 99999999;
+            beePositions[3][i] = 0; // move right set to false
+        }
+
+        // set bee's y position to 99999999 AFTER creating flowers
+        if ((beePositions[0][i] == 0 || beePositions[0][i] == 672)&&beePositions[5][i]) {
+          beePositions[1][i] = 99999999;
         }
     }
         
@@ -1545,7 +1588,7 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
     }
   } else { // if bee moving left
     // Check if bee is on last row, then create flowers
-    if (beePositions[1][i] == 448 || beePositions[1][i] == 480) {
+    if (beePositions[1][i] == 448) {
         bool flowerAlreadyDrawn32 = false;
 
         for (int a = 0; a < gameColumns+2; a++) {
@@ -1555,7 +1598,8 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
         }
 
         // If 32px is unflowered, create it
-        if (!flowerAlreadyDrawn32 && beePositions[0][i]-32 <= 672 && beePositions[0][i]-32 >= 0) {
+        if (!flowerAlreadyDrawn32 && beePositions[0][i]-32 <= 672 && beePositions[0][i]-32 >= 0 && !beePositions[5][i]) {
+            beePositions[5][i] = 1;
             flowersArray[flowersArrayIndex] = beePositions[0][i]-32;
             flowersArrayIndex++;
 
@@ -1569,8 +1613,12 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
               flowersArrayIndex++;
             }
 
-            // set bee's y position to 9999999 AFTER creating flowers
-            beePositions[1][i] = 9999999;
+            beePositions[3][i] = 1; // move right set to true
+        }
+
+        // set bee's y position to 9999999 AFTER creating flowers
+        if ((beePositions[0][i] == 0 || beePositions[0][i] == 672)&&beePositions[5][i]) {
+          beePositions[1][i] = 9999999;
         }
     }
 
@@ -1592,7 +1640,7 @@ void moveFastBee(float beePositions[][15], Clock& fastBeeClock, int i, int redHo
 }
 
 // Drawing function for a bee
-void drawBee(RenderWindow& window, float beePositions[5][20], Sprite beeSprites[20], int i, Texture textureBeeMovingRight, Texture textureBeeMovingLeft) { 
+void drawBee(RenderWindow& window, float beePositions[][20], Sprite beeSprites[20], int i, Texture textureBeeMovingRight, Texture textureBeeMovingLeft) { 
     if (beePositions[3][i]) {
       beeSprites[i].setTexture(textureBeeMovingRight);
       
@@ -1619,7 +1667,7 @@ void drawFastBee(RenderWindow& window, float beePositions[][15], Sprite fastBeeS
 }
 
 // Checks collision between bullet and bee
-void checkBulletBeeCollision(float bullet_x, float bullet_y, float beePositions[5][20], int i, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound beeBulletCollisionSound, int& score) {
+void checkBulletBeeCollision(float bullet_x, float bullet_y, float beePositions[][20], int i, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, bool& bullet_exists, Sound beeBulletCollisionSound, int& score) {
 
   if (beePositions[1][i] != 448) { // to prevent collision with the player
     if (bullet_x >= beePositions[0][i]-30 && bullet_x <= beePositions[0][i]+32 && bullet_y == beePositions[1][i]) { // if collision occurs
@@ -1746,11 +1794,12 @@ void checkBulletBirdCollision(int bullet_x, int bullet_y, Sound hummingBirdSound
     sleep(seconds(0.1));
     bulletCollisionCount++;
     bullet_exists = false;
-    if (bulletCollisionCount % 3 == 0) {
+    if (bulletCollisionCount % 3 == 0) { // if 3 collisions have occured
       hummingBirdSound.play();
       sleep(seconds(0.1));
       respawnClock.restart();
-
+      hummingBirdSprite.setColor(Color::Green);
+      
       // take humming bird outside the screen
       if (hummingBirdSprite.getPosition().x > resolutionX/2) {
         moveToX = 1000;
@@ -1809,6 +1858,7 @@ void drawSprayCans(RenderWindow& window, RectangleShape bigRectangles[], float r
 
 void determineBirdMovementForLevel4(Clock& gameClock, Clock& movementClock, Clock& respawnClock, int& moveToX, int& moveToY, int& movementCount, bool& combFound, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, int& score, Texture TextureBirdRight, Texture TextureBirdLeft, Sprite& hummingBirdSprite, bool& redCombFound, int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int powerUpsArray[][400], int& powerUpsArrayIndex) {
   if (gameClock.getElapsedTime().asSeconds() >= 10 && movementClock.getElapsedTime().asSeconds() >= 4.5 && respawnClock.getElapsedTime().asSeconds() >=10) { // humming bird appears after 10 seconds of the game's start and move after 4.5 seconds AND after 10 seconds if shot by bullet 3 times
+            hummingBirdSprite.setColor(Color::White);
             // making the comb diappear after 4.5 seconds
             if (combFound) { // if the humming bird was sitting on a honeycomb then make it disappear
               for (int i=0; i<honeyCombArrayIndex; i++) {
@@ -1910,6 +1960,7 @@ void determineBirdMovementForLevel4(Clock& gameClock, Clock& movementClock, Cloc
 
 void determineBirdMovement(Clock& gameClock, Clock& movementClock, Clock& respawnClock, int& moveToX, int& moveToY, int& movementCount, bool& combFound, int honeyCombArray[][gameRows*gameColumns], int& honeyCombArrayIndex, int& score, Texture TextureBirdRight, Texture TextureBirdLeft, Sprite& hummingBirdSprite, bool& redCombFound, int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex) {
   if (gameClock.getElapsedTime().asSeconds() >= 10 && movementClock.getElapsedTime().asSeconds() >= 4.5 && respawnClock.getElapsedTime().asSeconds() >=10) { // humming bird appears after 10 seconds of the game's start and move after 4.5 seconds AND after 10 seconds if shot by bullet 3 times
+            hummingBirdSprite.setColor(Color::White);
             // making the comb diappear after 4.5 seconds
             if (combFound) { // if the humming bird was sitting on a honeycomb then make it disappear
               for (int i=0; i<honeyCombArrayIndex; i++) {
@@ -2061,6 +2112,7 @@ void resetForLevel1(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
     beePositions[2][i] = 0; // moveDown flag
     beePositions[3][i] = static_cast<int>(beePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     beePositions[4][i] = 0; // isNextHoneyComb flag
+    beePositions[5][i] = 0; // hasCreatedFlower flag
   }
 
   player_x = (gameColumns / 2) * boxPixelsX;
@@ -2111,10 +2163,11 @@ void resetForLevel1(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
     fastBeePositions[2][i] = 0; // moveDown flag
     fastBeePositions[3][i] = static_cast<int>(fastBeePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     fastBeePositions[4][i] = 0; // isNextHoneyComb flag
+    fastBeePositions[5][i] = 0; // hasCreatedFlower flag
   }
 }
 
-void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[5][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots) {
+void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots) {
   bulletClock.restart();
   gameClock.restart();
   movementClock.restart();
@@ -2132,6 +2185,7 @@ void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
     beePositions[2][i] = 0; // moveDown flag
     beePositions[3][i] = static_cast<int>(beePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     beePositions[4][i] = 0; // isNextHoneyComb flag
+    beePositions[5][i] = 0; // hasCreatedFlower flag
   }
 
   for (int i = 0; i < 15; i++) {
@@ -2140,6 +2194,7 @@ void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
     fastBeePositions[2][i] = 0; // moveDown flag
     fastBeePositions[3][i] = static_cast<int>(fastBeePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     fastBeePositions[4][i] = 0; // isNextHoneyComb flag
+    fastBeePositions[5][i] = 0; // hasCreatedFlower flag
   }
 
   player_x = (gameColumns / 2) * boxPixelsX;
@@ -2185,7 +2240,7 @@ void resetForLevel2(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
 
 }
 
-void resetForLevel3(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[5][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, float rectangleHeights[], int& numberOfRectangles, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots, int selectedLevel) {
+void resetForLevel3(Clock& bulletClock, Clock& gameClock, float& bullet_x, float& bullet_y, bool& bullet_exists, float beePositions[][20], float& player_x, float& player_y, int& honeyCombArrayIndex, int& beeHiveArrayIndex, int& flowersArrayIndex, Sprite& hummingBirdSprite, Clock& movementClock, Clock& bulletCollisionClock, Clock& respawnClock, int& movementCount, int& bulletCollisionCount, int& bulletCount, float rectangleHeights[], int& numberOfRectangles, bool& firstTime, int honeyCombArray[][gameRows*gameColumns], int beeHiveArray[][gameRows*gameColumns], int flowersArray[], Music& bgMusic, float fastBeePositions[][15], int redHoneyCombArray[][gameRows*gameColumns], int& redHoneyCombArrayIndex, int& totalShots, int selectedLevel) {
   bulletClock.restart();
   gameClock.restart();
   movementClock.restart();
@@ -2203,6 +2258,7 @@ void resetForLevel3(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
     beePositions[2][i] = 0; // moveDown flag
     beePositions[3][i] = static_cast<int>(beePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     beePositions[4][i] = 0; // isNextHoneyComb flag
+    beePositions[5][i] = 0; // hasCreatedFlower flag
   }
 
   for (int i = 0; i < 15; i++) {
@@ -2211,6 +2267,7 @@ void resetForLevel3(Clock& bulletClock, Clock& gameClock, float& bullet_x, float
     fastBeePositions[2][i] = 0; // moveDown flag
     fastBeePositions[3][i] = static_cast<int>(fastBeePositions[0][i])==0 ? 1 : 0; // bee_moving_right flag
     fastBeePositions[4][i] = 0; // isNextHoneyComb flag
+    fastBeePositions[5][i] = 0; // hasCreatedFlower flag
   }
 
   player_x = (gameColumns / 2) * boxPixelsX;
